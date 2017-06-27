@@ -22,7 +22,7 @@ func TestAcceptance(t *testing.T) {
 		addr = strings.TrimLeft(env, "tcp://")
 	}
 
-	exporter := exec.Command("./memcached_exporter", "-memcached.address", addr)
+	exporter := exec.Command("./memcached_exporter", "-memcached.address", addr, "-memcached.alias", "test")
 	go func() {
 		if err := exporter.Run(); err != nil && !done {
 			t.Fatal(err)
@@ -84,26 +84,26 @@ func TestAcceptance(t *testing.T) {
 	}
 
 	tests := []string{
-		`memcached_up 1`,
-		`memcached_commands_total{command="get",status="hit"} 2`,
-		`memcached_commands_total{command="get",status="miss"} 1`,
-		`memcached_commands_total{command="set",status="hit"} 3`,
-		`memcached_commands_total{command="cas",status="hit"} 1`,
-		`memcached_current_bytes 274`,
-		`memcached_current_connections 11`,
-		`memcached_max_connections 1024`,
-		`memcached_current_items 2`,
-		`memcached_items_total 4`,
-		`memcached_slab_current_items{slab="1"} 1`,
-		`memcached_slab_current_items{slab="5"} 1`,
-		`memcached_slab_commands_total{command="set",slab="1",status="hit"} 2`,
-		`memcached_slab_commands_total{command="cas",slab="1",status="hit"} 1`,
-		`memcached_slab_commands_total{command="set",slab="5",status="hit"} 1`,
-		`memcached_slab_commands_total{command="cas",slab="5",status="hit"} 0`,
-		`memcached_slab_current_chunks{slab="1"} 10922`,
-		`memcached_slab_current_chunks{slab="5"} 4369`,
-		`memcached_slab_mem_requested_bytes{slab="1"} 74`,
-		`memcached_slab_mem_requested_bytes{slab="5"} 200`,
+		`memcached_up{addr="localhost:11211",alias="test"} 1`,
+		`memcached_commands_total{addr="localhost:11211",alias="test",command="get",status="hit"} 2`,
+		`memcached_commands_total{addr="localhost:11211",alias="test",command="get",status="miss"} 1`,
+		`memcached_commands_total{addr="localhost:11211",alias="test",command="set",status="hit"} 3`,
+		`memcached_commands_total{addr="localhost:11211",alias="test",command="cas",status="hit"} 1`,
+		`memcached_current_bytes{addr="localhost:11211",alias="test"} 274`,
+		`memcached_current_connections{addr="localhost:11211",alias="test"} 11`,
+		`memcached_max_connections{addr="localhost:11211",alias="test"} 1024`,
+		`memcached_current_items{addr="localhost:11211",alias="test"} 2`,
+		`memcached_items_total{addr="localhost:11211",alias="test"} 4`,
+		`memcached_slab_current_items{addr="localhost:11211",alias="test",slab="1"} 1`,
+		`memcached_slab_current_items{addr="localhost:11211",alias="test",slab="5"} 1`,
+		`memcached_slab_commands_total{addr="localhost:11211",alias="test",command="set",slab="1",status="hit"} 2`,
+		`memcached_slab_commands_total{addr="localhost:11211",alias="test",command="cas",slab="1",status="hit"} 1`,
+		`memcached_slab_commands_total{addr="localhost:11211",alias="test",command="set",slab="5",status="hit"} 1`,
+		`memcached_slab_commands_total{addr="localhost:11211",alias="test",command="cas",slab="5",status="hit"} 0`,
+		`memcached_slab_current_chunks{addr="localhost:11211",alias="test",slab="1"} 10922`,
+		`memcached_slab_current_chunks{addr="localhost:11211",alias="test",slab="5"} 4369`,
+		`memcached_slab_mem_requested_bytes{addr="localhost:11211",alias="test",slab="1"} 74`,
+		`memcached_slab_mem_requested_bytes{addr="localhost:11211",alias="test",slab="5"} 200`,
 	}
 	for _, test := range tests {
 		if !bytes.Contains(body, []byte(test)) {

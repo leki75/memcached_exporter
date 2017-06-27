@@ -64,7 +64,7 @@ type Exporter struct {
 }
 
 // NewExporter returns an initialized exporter.
-func NewExporter(server string, timeout time.Duration) *Exporter {
+func NewExporter(server string, alias string, timeout time.Duration) *Exporter {
 	c := memcache.New(server)
 	c.Timeout = timeout
 
@@ -74,217 +74,217 @@ func NewExporter(server string, timeout time.Duration) *Exporter {
 			prometheus.BuildFQName(namespace, "", "up"),
 			"Could the memcached server be reached.",
 			nil,
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		uptime: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "", "uptime_seconds"),
 			"Number of seconds since the server started.",
 			nil,
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		version: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "", "version"),
 			"The version of this memcached server.",
 			[]string{"version"},
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		bytesRead: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "", "read_bytes_total"),
 			"Total number of bytes read by this server from network.",
 			nil,
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		bytesWritten: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "", "written_bytes_total"),
 			"Total number of bytes sent by this server to network.",
 			nil,
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		currentConnections: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "", "current_connections"),
 			"Current number of open connections.",
 			nil,
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		maxConnections: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "", "max_connections"),
 			"Maximum number of clients allowed.",
 			nil,
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		connectionsTotal: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "", "connections_total"),
 			"Total number of connections opened since the server started running.",
 			nil,
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		currentBytes: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "", "current_bytes"),
 			"Current number of bytes used to store items.",
 			nil,
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		limitBytes: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "", "limit_bytes"),
 			"Number of bytes this server is allowed to use for storage.",
 			nil,
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		commands: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "", "commands_total"),
 			"Total number of all requests broken down by command (get, set, etc.) and status.",
 			[]string{"command", "status"},
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		items: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "", "current_items"),
 			"Current number of items stored by this instance.",
 			nil,
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		itemsTotal: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "", "items_total"),
 			"Total number of items stored during the life of this instance.",
 			nil,
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		evictions: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "", "items_evicted_total"),
 			"Total number of valid items removed from cache to free memory for new items.",
 			nil,
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		reclaimed: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "", "items_reclaimed_total"),
 			"Total number of times an entry was stored using memory from an expired entry.",
 			nil,
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		malloced: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "", "malloced_bytes"),
 			"Number of bytes of memory allocated to slab pages.",
 			nil,
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		itemsNumber: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "slab", "current_items"),
 			"Number of items currently stored in this slab class.",
 			[]string{"slab"},
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		itemsAge: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "slab", "items_age_seconds"),
 			"Number of seconds the oldest item has been in the slab class.",
 			[]string{"slab"},
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		itemsCrawlerReclaimed: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "slab", "items_crawler_reclaimed_total"),
 			"Total number of items freed by the LRU Crawler.",
 			[]string{"slab"},
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		itemsEvicted: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "slab", "items_evicted_total"),
 			"Total number of times an item had to be evicted from the LRU before it expired.",
 			[]string{"slab"},
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		itemsEvictedNonzero: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "slab", "items_evicted_nonzero_total"),
 			"Total number of times an item which had an explicit expire time set had to be evicted from the LRU before it expired.",
 			[]string{"slab"},
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		itemsEvictedTime: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "slab", "items_evicted_time_seconds"),
 			"Seconds since the last access for the most recent item evicted from this class.",
 			[]string{"slab"},
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		itemsEvictedUnfetched: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "slab", "items_evicted_unfetched_total"),
 			"Total nmber of items evicted and never fetched.",
 			[]string{"slab"},
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		itemsExpiredUnfetched: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "slab", "items_expired_unfetched_total"),
 			"Total number of valid items evicted from the LRU which were never touched after being set.",
 			[]string{"slab"},
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		itemsOutofmemory: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "slab", "items_outofmemory_total"),
 			"Total number of items for this slab class that have triggered an out of memory error.",
 			[]string{"slab"},
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		itemsReclaimed: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "slab", "items_reclaimed_total"),
 			"Total number of items reclaimed.",
 			[]string{"slab"},
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		itemsTailrepairs: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "slab", "items_tailrepairs_total"),
 			"Total number of times the entries for a particular ID need repairing.",
 			[]string{"slab"},
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		slabsChunkSize: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "slab", "chunk_size_bytes"),
 			"Number of bytes allocated to each chunk within this slab class.",
 			[]string{"slab"},
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		slabsChunksPerPage: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "slab", "chunks_per_page"),
 			"Number of chunks within a single page for this slab class.",
 			[]string{"slab"},
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		slabsCurrentPages: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "slab", "current_pages"),
 			"Number of pages allocated to this slab class.",
 			[]string{"slab"},
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		slabsCurrentChunks: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "slab", "current_chunks"),
 			"Number of chunks allocated to this slab class.",
 			[]string{"slab"},
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		slabsChunksUsed: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "slab", "chunks_used"),
 			"Number of chunks allocated to an item.",
 			[]string{"slab"},
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		slabsChunksFree: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "slab", "chunks_free"),
 			"Number of chunks not yet allocated items.",
 			[]string{"slab"},
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		slabsChunksFreeEnd: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "slab", "chunks_free_end"),
 			"Number of free chunks at the end of the last allocated page.",
 			[]string{"slab"},
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		slabsMemRequested: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "slab", "mem_requested_bytes"),
 			"Number of bytes of memory actual items take up within a slab.",
 			[]string{"slab"},
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 		slabsCommands: prometheus.NewDesc(
 			prometheus.BuildFQName(namespace, "slab", "commands_total"),
 			"Total number of all requests broken down by command (get, set, etc.) and status per slab.",
 			[]string{"slab", "command", "status"},
-			nil,
+			prometheus.Labels{"addr": server, "alias": alias},
 		),
 	}
 }
@@ -471,7 +471,8 @@ func sum(stats map[string]string, keys ...string) (float64, error) {
 
 func main() {
 	var (
-		address       = flag.String("memcached.address", "localhost:11211", "Memcached server address.")
+		address       = flag.String("memcached.address", "localhost:11211", "Memcached server addresses separated by comma.")
+		alias         = flag.String("memcached.alias", "memcached", "Memcached server aliases separated by comma.")
 		timeout       = flag.Duration("memcached.timeout", time.Second, "memcached connect timeout.")
 		pidFile       = flag.String("memcached.pid-file", "", "Optional path to a file containing the memcached PID for additional metrics.")
 		showVersion   = flag.Bool("version", false, "Print version information.")
@@ -487,7 +488,16 @@ func main() {
 	log.Infoln("Starting memcached_exporter", version.Info())
 	log.Infoln("Build context", version.BuildContext())
 
-	prometheus.MustRegister(NewExporter(*address, *timeout))
+	addrs := strings.Split(*address, ",")
+	aliases := strings.Split(*alias, ",")
+	for len(aliases) < len(addrs) {
+		aliases = append(aliases, "memcached")
+	}
+
+	for i, addr := range addrs {
+		prometheus.MustRegister(NewExporter(addr, aliases[i], *timeout))
+	}
+
 	if *pidFile != "" {
 		procExporter := prometheus.NewProcessCollectorPIDFn(
 			func() (int, error) {
